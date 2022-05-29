@@ -1,4 +1,37 @@
 import json
+import os
+
+# from fastapi_sqlalchemy import db
+from fastapi_sqla import open_session
+from loguru import logger
+from app.model.dbmodels import Event
+from app.db.DbHelper import Session, ExecuteAdd
+
+
+def event_record():
+    pass
+
+
+def event_record_json(*args, **kwargs):
+    try:
+
+        result = json.loads(args[0])
+        logger.debug(result)
+        ev = Event(**result)
+        os.getcwd()
+
+        ExecuteAdd(ev)
+
+        # with open_session() as session:
+        #     session.add(ev)
+        #     session.commit()
+
+        # with db():
+        #     db.session.add(ev)
+        #     db.session.commit()
+    except Exception as ex:
+        # logger.error(f'current cwd {os.getcwd()}')
+        logger.error(ex)
 
 
 def read_user():
