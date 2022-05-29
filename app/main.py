@@ -5,7 +5,7 @@ os.environ['sqlalchemy_url'] = "sqlite:///" + os.path.join(os.getcwd(), 'fast.db
 
 import time
 from multiprocessing import Process
-import  multiprocessing as mp
+import multiprocessing as mp
 import fastapi_sqla
 import uvicorn
 from apscheduler.schedulers.twisted import TwistedScheduler
@@ -90,7 +90,7 @@ def start_udp(port):
 
 if __name__ == "__main__":
     try:
-        mp.freeze_support() #为使用了 multiprocessing  的程序，提供冻结以产生 Windows 可执行文件的支持。
+        mp.freeze_support()  # 为使用了 multiprocessing  的程序，提供冻结以产生 Windows 可执行文件的支持。
         p = Process(target=start_udp, args=(11000,))
         p.start()
         # p.join()
