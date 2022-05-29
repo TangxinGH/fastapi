@@ -5,7 +5,7 @@ os.environ['sqlalchemy_url'] = "sqlite:///" + os.path.join(os.getcwd(), 'fast.db
 
 import time
 from multiprocessing import Process
-
+import  multiprocessing as mp
 import fastapi_sqla
 import uvicorn
 from apscheduler.schedulers.twisted import TwistedScheduler
@@ -79,24 +79,24 @@ def read_result(user_id: int):
     return api.read_result(user_id)
 
 
-def start_fastapi(msg):
-    logger.info(f'udp server port: 8990')
+def start_udp(port):
+    logger.info(f'udp server port:  {port}')
     logger.info('start up udp service')
-
     # reactor.callLater(1.5, start_udp, "hello, world")
-    reactor.listenUDP(8990, EchoUDP())
+    reactor.listenUDP(port, EchoUDP())
     reactor.run()
     print("reactor exit")
 
 
 if __name__ == "__main__":
     try:
-        p = Process(target=start_fastapi, args=('main',))
+        mp.freeze_support() #为使用了 multiprocessing  的程序，提供冻结以产生 Windows 可执行文件的支持。
+        p = Process(target=start_udp, args=(11000,))
         p.start()
         # p.join()
         logger.info(f'start start_fastapi:')
         logger.info(f'current cwd: {os.getcwd()}')
-        uvicorn.run(app, port=8089, reload=False)
+        uvicorn.run(app, port=21000, reload=False)
         logger.info('uvicorn exist')
 
     except Exception as ex:
