@@ -37,8 +37,8 @@ class EchoUDP(DatagramProtocol):
         self.transport.write(resp.encode('ascii'), address)
 
 
-@app.post("/event")
-def root():
+@app.get("/api/events")
+def get_events():
     return api.event_record()
 
 

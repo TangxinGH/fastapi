@@ -1,4 +1,6 @@
 import os
+
+import pandas
 from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -13,6 +15,16 @@ def ExecuteAdd(obj):
     try:
         with Session() as session, session.begin():
             session.add(obj)
+            # inner context calls session.commit(), if there were no exceptions
+            # outer context calls session.close()
+    except Exception as ex:
+        logger.error(ex)
+        raise ex
+def ExecuteQuery(sql):
+    try:
+        with engine.connect() as con:
+            data = con.execute(sql)
+            return pandas.DataFrame(data)
             # inner context calls session.commit(), if there were no exceptions
             # outer context calls session.close()
     except Exception as ex:

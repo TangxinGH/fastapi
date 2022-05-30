@@ -5,11 +5,17 @@ import os
 from fastapi_sqla import open_session
 from loguru import logger
 from app.model.dbmodels import Event
-from app.db.DbHelper import Session, ExecuteAdd
-
-
+from app.db.DbHelper import Session, ExecuteAdd, ExecuteQuery
+import pandas as pd
+from sqlalchemy.dialects import sqlite
 def event_record():
-    pass
+    data = {}
+    with Session() as session:
+        sql = session.query(Event)# all()
+        raw = str(sql.statement.compile(dialect=sqlite.dialect()))
+        data = ExecuteQuery(raw)
+
+    return data
 
 
 def event_record_json(*args, **kwargs):
