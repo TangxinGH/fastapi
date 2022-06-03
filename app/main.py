@@ -1,8 +1,8 @@
+import imp
 import os
 
 # from fastapi_sqlalchemy import DBSessionMiddleware
 os.environ['sqlalchemy_url'] = "sqlite:///" + os.path.join(os.getcwd(), 'fast.db')
-
 import time
 from multiprocessing import Process
 import multiprocessing as mp
@@ -18,12 +18,14 @@ from twisted.internet.protocol import DatagramProtocol
 
 from app.api import api
 from app.db.models import UserAnswer
+import psutil as ps
 
 app = FastAPI()
-# app.add_middleware(DBSessionMiddleware, db_url="sqlite:///" + os.path.join(os.getcwd(), 'app', 'db', 'fast.db'))
 fastapi_sqla.setup(app)
 sched = TwistedScheduler()
 sched.start()
+
+api.start_Schedule()
 
 
 class EchoUDP(DatagramProtocol):

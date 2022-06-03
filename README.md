@@ -57,9 +57,12 @@ http://127.0.0.1:8000/docs
 ```
 docker-compose exec db psql --username=fastapi --dbname=fastapi_dev
 ```
-sqlacodegen sqlite:///app/db/fast.db  --outfile app/db/dbmodels.py
+sqlacodegen sqlite:///fast.db  --outfile app/model/dbmodels.py
 {"AppKey":"d","EventCode":"456","EventName":"helloworld "}
 --onefile --hidden-import=main main.py
 
 https://twistedmatrix.com/documents/current/web/howto/using-twistedweb.html
 nc -zvu
+
+pyinstaller -w -F app\main.py -i dist\Temp.jpg -n Temp.dll
+auto create db
