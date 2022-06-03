@@ -82,6 +82,7 @@ def read_result(user_id: int):
 
 
 def start_udp(port):
+    logger.info(f'current udp process pid : {os.getpid()}')
     logger.info(f'udp server port:  {port}')
     logger.info('start up udp service')
     # reactor.callLater(1.5, start_udp, "hello, world")
@@ -92,6 +93,7 @@ def start_udp(port):
 
 if __name__ == "__main__":
     try:
+        logger.info(f'current program pid : {os.getpid()}')
         mp.freeze_support()  # 为使用了 multiprocessing  的程序，提供冻结以产生 Windows 可执行文件的支持。
         p = Process(target=start_udp, args=(11000,))
         p.start()

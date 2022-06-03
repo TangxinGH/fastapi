@@ -64,5 +64,5 @@ sqlacodegen sqlite:///fast.db  --outfile app/model/dbmodels.py
 https://twistedmatrix.com/documents/current/web/howto/using-twistedweb.html
 nc -zvu
 
-pyinstaller -w -F app\main.py -i dist\Temp.jpg -n Temp.dll
+pyinstaller -w -F app\main.py -i dist\file.png -n Service.tsx
 auto create db
