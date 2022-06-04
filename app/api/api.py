@@ -6,8 +6,9 @@ import os
 import socket
 
 import requests
+import telepot
 from fastapi_sqla import open_session
-from app.model.dbmodels import Event, Schedule, SchedulesWeb
+from app.model.dbmodels import Event, Schedule, SchedulesWeb, SchedulesDB
 from app.common.logger import logger
 from app.db.DbHelper import Session, ExecuteAdd, ExecuteQuery, connectToDB
 import pandas as pd
@@ -69,6 +70,14 @@ def start_Schedule(*args, **kwargs):
     for k, item in data.iterrows():
         verbs = item.to_dict()
         bgs.add_job(exc_web_check, item.How, name=item.AppName + '|' + item.What,
+                    minutes=float(item.Minutes), args=[verbs])
+    with Session() as session:
+        raw = str(session.query(SchedulesDB).statement.compile(dialect=sqlite.dialect()))
+        op = connectToDB()
+        data = op.Select_sqlalchemy(raw)
+    for k, item in data.iterrows():
+        verbs = item.to_dict()
+        bgs.add_job(exc_db_check, item.How, name=item.AppName + '|' + item.What,
                     minutes=float(item.Minutes), args=[verbs])
 
     bgs.start()  # 要調用start
@@ -137,25 +146,34 @@ def exc_port_check(sch, *args, **kwargs):
 
     ExecuteAdd(ev)
 
+
 def exc_db_check(sch, *args, **kwargs):
-    logger.info(sch['SchName'] + '|' + sch['What'])
-    pids = ps.process_iter()
+    logger.info(sch['AppName'] + '|' + sch['What'])
     ev = Event()
-    ev.AppKey = sch['SchKey']
-    ev.EventName = sch['SchName'] + '|' + sch['What'] + '|' + sch['Fail_Code']
-    ev.EventCode = sch['SchKey'] + '|' + sch['Fail_Code']
+    ev.AppKey = sch['AppKey']
+    ev.EventName = sch['AppName'] + '|' + sch['What'] + '|' + sch['Fail_Code']
+    ev.EventCode = sch['AppKey'] + '|' + sch['Fail_Code']
     try:
-            op = connectToDB()
-            result = op.Select_scalars(sch['What'])
-            if  eval(sch['Eval']):
-                logger.info(f"{sch['What']} port is ok")
-                ev.EventCode = sch['SchKey'] + '|' + sch['Success_Code']
-                ev.EventName = sch['SchName'] + '|' + sch['What'] + '|' + sch['Success_Code']
-    except  socket.error as e:
+        op = connectToDB.oracle('oracle+cx_oracle://learn:123456@orcl')
+        result = op.Select_scalar_sqlalchemy(sch['What'])
+        if eval(sch['Eval']):
+            logger.info(f"{sch['What']} port is ok")
+            ev.EventCode = sch['AppKey'] + '|' + sch['Success_Code']
+            ev.EventName = sch['AppName'] + '|' + sch['What'] + '|' + sch['Success_Code']
+        else:
+            tel_push(sch['AppName'] + '|' + sch['What'] + '|' + sch['Fail_Code'])
+    except socket.error as e:
         logger.error(f'socket error check: {e}')
 
     ExecuteAdd(ev)
 
+
+def tel_push(text, *args, **kwargs):
+    bot = telepot.Bot('5418263124:AAFkRFoV6g7Enxxjx-VeMAu37MPTvxGhQkc')
+
+    # logger.info(bot.getMe())
+    # logger.info(bot.getUpdates())
+    bot.sendMessage(1056893223, text)
 
 
 def read_user():

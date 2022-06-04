@@ -68,9 +68,9 @@ class connectToDB():
 
     # 可选构造函数
     @classmethod
-    def oracle(cls, *args, **kwargs):
+    def oracle(cls, connString, *args, **kwargs):
         obj = cls('no default')
-        obj.engine = sqlalchemy.create_engine(args[0])
+        obj.engine = sqlalchemy.create_engine(connString)
         obj.engine_session = sessionmaker(obj.engine)
         obj.set_log()
         return obj
