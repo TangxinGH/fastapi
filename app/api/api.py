@@ -51,6 +51,9 @@ def event_record_json(*args, **kwargs):
 
 def start_Schedule(*args, **kwargs):
     bgs = BackgroundScheduler()
+    # add job for refresh db's schedule
+    # sched.add_job()
+    # bgs.remove_all_jobs()
     # bgs._daemon = False
     data = []
     with Session() as session:
