@@ -137,6 +137,25 @@ def exc_port_check(sch, *args, **kwargs):
 
     ExecuteAdd(ev)
 
+def exc_db_check(sch, *args, **kwargs):
+    logger.info(sch['SchName'] + '|' + sch['What'])
+    pids = ps.process_iter()
+    ev = Event()
+    ev.AppKey = sch['SchKey']
+    ev.EventName = sch['SchName'] + '|' + sch['What'] + '|' + sch['Fail_Code']
+    ev.EventCode = sch['SchKey'] + '|' + sch['Fail_Code']
+    try:
+            op = connectToDB()
+            result = op.Select_scalars(sch['What'])
+            if  eval(sch['Eval']):
+                logger.info(f"{sch['What']} port is ok")
+                ev.EventCode = sch['SchKey'] + '|' + sch['Success_Code']
+                ev.EventName = sch['SchName'] + '|' + sch['What'] + '|' + sch['Success_Code']
+    except  socket.error as e:
+        logger.error(f'socket error check: {e}')
+
+    ExecuteAdd(ev)
+
 
 
 def read_user():
