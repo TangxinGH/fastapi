@@ -16,6 +16,20 @@ from sqlalchemy.dialects import sqlite
 import psutil as ps
 from apscheduler.schedulers.background import BackgroundScheduler
 
+# os.environ['http_proxy'] = "socks5://127.0.0.1:10808"
+# os.environ['https_proxy'] = "socks5://127.0.0.1:10808"
+
+# def set_telepot_socks_proxy(url="http://127.0.0.1:10808", username=None, password=None):
+#     from urllib3.contrib.socks import SOCKSProxyManager
+#     from telepot.api import _default_pool_params, _onetime_pool_params
+#     telepot.api._onetime_pool_spec = (
+#         SOCKSProxyManager, dict(proxy_url=url, username=username, password=password, **_onetime_pool_params))
+#     telepot.api._pools['default'] = SOCKSProxyManager(url, username=username, password=password, **_default_pool_params)
+
+# telepot.api.set_proxy()
+# set_telepot_socks_proxy("socks5://127.0.0.1:10808")
+# bot = telepot.Bot('5418263124:AAFkRFoV6g7Enxxjx-VeMAu37MPTvxGhQkc')
+
 
 def event_record():
     data = {}
@@ -172,11 +186,23 @@ def exc_db_check(sch, *args, **kwargs):
 
 
 def tel_push(text, *args, **kwargs):
-    bot = telepot.Bot('5418263124:AAFkRFoV6g7Enxxjx-VeMAu37MPTvxGhQkc')
-
     # logger.info(bot.getMe())
     # logger.info(bot.getUpdates())
-    bot.sendMessage(1056893223, text)
+    # bot = telepot.Bot('5418263124:AAFkRFoV6g7Enxxjx-VeMAu37MPTvxGhQkc')
+
+    # bot.sendMessage(1056893223, text)
+    proxies = {
+
+        'http': 'socks5://127.0.0.1:10808',
+        'https': 'socks5://127.0.0.1:10808',
+    }
+
+    url = "https://api.telegram.org/bot5418263124:AAFkRFoV6g7Enxxjx-VeMAu37MPTvxGhQkc/sendMessage"
+    data = {
+        "text": text,
+        "chat_id": "1056893223"
+    }
+    requests.post(url, json=data, proxies=proxies)
 
 
 def read_user():
